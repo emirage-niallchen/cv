@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { File } from "@prisma/client";
-import { FileVO, getFileIcon } from "@/app/api/files/route";
+import { FileVO } from "@/app/api/files/route";
+import { getFileIcon } from "@/lib/utils";
 
 export function FileDownloads({ files }: { files: FileVO[] }) {
   return (

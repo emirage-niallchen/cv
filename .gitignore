@@ -1,16 +1,17 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 # 他妈的忘了的操作流程
-# 1. 先在.gitignore中添加需要忽略的文件
-# 2. git rm --cached -r .       从索引中移除所有已跟踪的文件（不删除本地文件）
-# 3. git commit -m "add .gitignore"
-# 4. git push origin main
-# 5. git status           
-
-
-# git filter-branch --force --index-filter "git rm --cached --ignore-unmatch <file_or_directory>" --prune-empty --tag-name-filter cat -- --all
-
-# git push origin --force --all
-
+# 切换到一个脱离主分支的另外一条全新主分支
+#git checkout --orphan latest_branch
+# 暂存所有改动过的文件，内容为当前旧分支的最新版本所有文件
+#git add -A
+#提交更改
+#git commit -am "commit message"
+#删除原始主分支
+#git branch -D main
+#将当前分支重命名为 main
+#git branch -m main
+#最后，强制更新您的存储库
+# git push -f origin main
 
 .cursorrules
 /.cursor/

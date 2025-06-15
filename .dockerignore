@@ -1,0 +1,44 @@
+# 版本控制
+.git
+.gitignore
+.github
+
+# 依赖目录
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# 构建目录
+.next
+out
+
+# 环境变量(生产环境时使用)
+# .env
+# .env.local
+# .env.production
+
+# 测试文件
+__tests__
+coverage
+jest.config.js
+
+# 编辑器配置
+.idea
+.vscode
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 备份文件
+backups
+
+# 其他
+README.md
+LICENSE
+*.md
+docker-compose*
+Dockerfile* 

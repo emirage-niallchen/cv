@@ -6,50 +6,44 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 interface LoginFormData {
-  username: string;
+  email: string;
   password: string;
 }
 
-interface LoginFormProps {
-  onLogin: (formData: FormData) => Promise<void>;
-}
-
-export function LoginForm({ onLogin }: LoginFormProps) {
+export function LoginForm() {
   const router = useRouter();
   const [formData, setFormData] = useState<LoginFormData>({
-    username: "",
+    email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     try {
-
-
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
       });
-      
-      const data = await response.json();
 
-      
-      if (!response.ok) {
-        throw new Error(data.error || '登录失败');
+      if (result?.error) {
+        toast.error("邮箱或密码错误");
+      } else {
+        toast.success("登录成功");
+        router.push("/admin/dashboard");
+        router.refresh();
       }
-      
-      toast.success('登录成功');
-      router.push('/admin/dashboard');
-      router.refresh();
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(error instanceof Error ? error.message : '登录失败');
+      toast.error("登录失败，请重试");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,11 +55,12 @@ export function LoginForm({ onLogin }: LoginFormProps) {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            type="text"
-            value={formData.username}
-            onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-            placeholder="用户名"
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+            placeholder="邮箱地址"
             required
+            disabled={isLoading}
           />
           <Input
             type="password"
@@ -73,9 +68,10 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
             placeholder="密码"
             required
+            disabled={isLoading}
           />
-          <Button type="submit" className="w-full">
-            登录
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? '登录中...' : '登录'}
           </Button>
         </form>
       </CardContent>

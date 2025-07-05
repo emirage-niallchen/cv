@@ -5,6 +5,18 @@ import { TechVO } from "@/app/api/techs/route";
 //todo 整个界面以卡片的形式展示技术栈卡片，卡片上先展示图片，若没有，则在图片的位置上，展示名称。之后使用文字展示"描述"整个卡片的底色为   背景颜色的透明度为0.5
 
 export function TechStackGrid({ techs }: { techs: TechVO[] }) {
+  console.log('TechStackGrid received techs:', techs);
+  
+  if (!techs) {
+    console.log('techs is undefined or null');
+    return null;
+  }
+  
+  if (!Array.isArray(techs)) {
+    console.log('techs is not an array:', typeof techs);
+    return null;
+  }
+
   return (
     <section className="py-16" id="tech-stack">
       <div className="container mx-auto px-4">

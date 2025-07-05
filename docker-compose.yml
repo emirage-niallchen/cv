@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "39242:3000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/prisma/cv_prod.db
@@ -23,26 +23,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  # 备份服务
-  backup:
-    image: alpine:latest
-    volumes:
-      - ./prisma:/data/prisma
-      - ./uploads:/data/uploads
-      - ./backups:/backups
-    command: >
-      /bin/sh -c "
-        apk add --no-cache tar gzip;
-        mkdir -p /backups;
-        while true; do
-          BACKUP_FILE=/backups/backup_`date +%Y%m%d_%H%M%S`.tar.gz;
-          tar -czf $$BACKUP_FILE /data;
-          find /backups -type f -mtime +7 -delete;
-          echo 'Backup completed to '$$BACKUP_FILE;
-          sleep 86400;
-        done
-      "
-    restart: unless-stopped
-    depends_on:
-      - app 

@@ -7,10 +7,7 @@ const initSchema = z.object({
   username: z.string().min(1, "用户名不能为空"),
   password: z.string().min(6, "密码至少需要6个字符"),
   confirmPassword: z.string(),
-  email: z.union([
-    z.string().email("邮箱格式不正确"),
-    z.string().length(0)
-  ]).optional(),
+  email: z.string().email("邮箱格式不正确"),
   name: z.string().optional()
 }).refine((data) => data.password === data.confirmPassword, {
   message: "密码不匹配",
@@ -36,7 +33,7 @@ export async function POST(request: Request) {
       data: {
         username: validated.username,
         password: hashedPassword,
-        email: validated.email ?? '',
+        email: validated.email,
         name: validated.name ?? '',
         description: ''
       },

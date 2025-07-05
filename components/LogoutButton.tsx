@@ -2,27 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { toast } from "sonner";
 
 export function LogoutButton() {
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      // 使用 next-auth 自带的 signOut 功能
+      await signOut({ 
+        redirect: false,
+        callbackUrl: "/login"
       });
-
-      if (response.ok) {
-        router.push("/login");
-        router.refresh();
-      } else {
-        console.error("登出失败");
-      }
+      
+      toast.success('登出成功');
+      router.push("/login");
+      router.refresh();
     } catch (error) {
       console.error("登出错误:", error);
+      toast.error('登出失败，请稍后重试');
     }
   };
 

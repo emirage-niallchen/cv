@@ -1,58 +1,17 @@
 import { NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
-import type { NextRequest } from 'next/server';
+import { getToken } from "next-auth/jwt";
 
-// 创建用于验证的密钥
-const getJwtSecretKey = () => {
-  const secret = process.env.JWT_SECRET || 'your-secret-key';
-  const encoder = new TextEncoder();
-  return encoder.encode(secret);
-};
-
-export async function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
-  const { pathname } = request.nextUrl;
-
-  console.log('Middleware check:', {
-    path: pathname,
-    hasToken: !!token,
-    tokenValue: token?.substring(0, 20) + '...'
-  });
-
-  // 管理员路由保护
-  if (pathname.startsWith('/admin')) {
-    if (!token) {
-      console.log('No token found, redirecting to login');
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
-
-    try {
-      const verified = await jwtVerify(token, getJwtSecretKey());
-      console.log('Token verified for admin route:', verified.payload);
-      return NextResponse.next();
-    } catch (error) {
-      console.log('Token verification failed:', error);
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
+export async function middleware(req) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  if (req.nextUrl.pathname.startsWith("/admin") && !token) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
-
-  // 如果已登录用户访问登录页，重定向到管理面板
-  if (pathname === '/login') {
-    if (token) {
-      try {
-        const verified = await jwtVerify(token, getJwtSecretKey());
-        console.log('Token verified for login page:', verified.payload);
-        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
-      } catch (error) {
-        console.log('Login page token verification failed:', error);
-        return NextResponse.next();
-      }
-    }
+  if (req.nextUrl.pathname === "/login" && token) {
+    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/login']
+  matcher: ["/admin/:path*", "/login"],
 }; 

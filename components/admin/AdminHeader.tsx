@@ -5,9 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { fetcher } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { signOut } from "next-auth/react";
 
 export default function AdminHeader() {
   const router = useRouter();
@@ -15,21 +17,20 @@ export default function AdminHeader() {
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      // 使用 next-auth 自带的 signOut 功能
+      await signOut({ 
+        redirect: false,
+        callbackUrl: "/login"
       });
-
-      if (response.ok) {
-        router.push("/login");
-        router.refresh();
-      } else {
-        console.error("登出失败");
-      }
+      
+      // 清除所有 SWR 缓存
+      await mutate(() => true, undefined, { revalidate: false });
+      toast.success('登出成功');
+      router.push("/login");
+      router.refresh();
     } catch (error) {
       console.error("登出错误:", error);
+      toast.error('登出失败，请稍后重试');
     }
   };
 

@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 export default function LoginPage() {
   const router = useRouter();
   const [isInitialSetup, setIsInitialSetup] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const checkAdminExists = async () => {
     try {
@@ -18,6 +19,8 @@ export default function LoginPage() {
     } catch (error) {
       console.error('检查管理员失败:', error);
       setIsInitialSetup(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -25,32 +28,25 @@ export default function LoginPage() {
     checkAdminExists();
   }, []);
 
-  const handleLogin = async (formData: FormData) => {
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.get('username'),
-          password: formData.get('password'),
-        }),
-        credentials: 'include',
-      });
-
-      const data = await res.json();
-
-      if (data.status === 'success') {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        router.push('/admin/dashboard');
-      } else {
-        alert(data.error || '密码错误');
-      }
-    } catch (error) {
-      alert('登录请求失败，请稍后重试');
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-pattern">
+        <div className="mb-8">
+          <Image
+            src="/Track-Resume.svg"
+            alt="Track Resume Logo"
+            width={600}
+            height={240}
+            priority
+          />
+        </div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-2 text-gray-600">加载中...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-pattern">
@@ -63,7 +59,7 @@ export default function LoginPage() {
           priority
         />
       </div>
-      {isInitialSetup ? <InitForm /> : <LoginForm onLogin={handleLogin} />}
+      {isInitialSetup ? <InitForm /> : <LoginForm />}
     </div>
   );
 } 

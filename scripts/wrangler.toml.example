@@ -1,0 +1,27 @@
+# Cloudflare Wrangler 配置文件示例
+# 复制此文件为 wrangler.toml 并根据实际情况修改
+
+name = "track_resume"
+main = "src/index.ts"
+compatibility_date = "2025-06-30"
+
+# D1 数据库配置
+[[d1_databases]]
+binding = "DB"
+database_name = "track_resume"
+database_id = "560c69f7-8ff6-4516-b7a2-5dfccb7d2d93"
+
+# 环境变量
+[vars]
+NODE_ENV = "production"
+
+# 构建配置
+[build]
+command = "npm run build"
+
+# 部署配置
+[env.production]
+name = "track_resume-prod"
+
+[env.staging]
+name = "track_resume-staging"

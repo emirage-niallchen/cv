@@ -1,5 +1,5 @@
 # Cloudflare Wrangler 配置文件
-name = "track_resume"
+name = "trackresume"
 main = "src/index.ts"
 compatibility_date = "2025-06-30"
 

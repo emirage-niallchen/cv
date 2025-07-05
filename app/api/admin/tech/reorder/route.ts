@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { checkAuth } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: "未授权访问" }, { status: 401 });
+    const authResult = await checkAuth();
+    if (!authResult.authorized) {
+      return NextResponse.json({ error: authResult.error }, { status: 401 });
     }
 
     const { techId, direction } = await request.json();

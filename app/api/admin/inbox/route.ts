@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { getServerSession } from "next-auth"
-
+import { checkAuth } from "@/lib/auth"
 
 export async function DELETE() {
     try {
+        const authResult = await checkAuth();
+        if (!authResult.authorized) {
+            return NextResponse.json({ error: authResult.error }, { status: 401 });
+        }
+
         await prisma.inbox.deleteMany()
         return NextResponse.json({ message: "所有消息已删除" })
     } catch (error) {
@@ -13,11 +17,13 @@ export async function DELETE() {
     }
 }
 
-
-
-
 export async function GET(request: Request) {
   try {
+    const authResult = await checkAuth();
+    if (!authResult.authorized) {
+        return NextResponse.json({ error: authResult.error }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get("page") || "1")
     const pageSize = parseInt(searchParams.get("pageSize") || "20")
@@ -37,7 +43,6 @@ export async function GET(request: Request) {
       }),
       prisma.inbox.count()
     ])
-
 
     // 方式2：如果要明确指定所有字段，可以这样写：
     /*

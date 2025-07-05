@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { checkAuth } from "@/lib/auth";
 import { unlink } from "fs/promises";
 import path from "path";
 
@@ -10,9 +10,9 @@ export async function PATCH(
 ) {
   try {
     // 验证用户权限
-    const session = await auth();
-    if (!session) {
-      return new Response(JSON.stringify({ error: "未授权访问" }), {
+    const authResult = await checkAuth();
+    if (!authResult.authorized) {
+      return new Response(JSON.stringify({ error: authResult.error }), {
         status: 401,
       });
     }
@@ -70,9 +70,9 @@ export async function DELETE(
 ) {
   try {
     // 验证用户权限
-    const session = await auth();
-    if (!session) {
-      return new Response(JSON.stringify({ error: "未授权访问" }), {
+    const authResult = await checkAuth();
+    if (!authResult.authorized) {
+      return new Response(JSON.stringify({ error: authResult.error }), {
         status: 401,
       });
     }

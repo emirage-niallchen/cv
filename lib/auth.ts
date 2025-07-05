@@ -90,3 +90,19 @@ export const authOptions = {
   },
 }
 
+// 导出 auth 函数供 API 路由使用
+export const { auth, handlers } = NextAuth(authOptions)
+
+/**
+ * 权限检查辅助函数
+ * @param session 用户会话
+ * @returns 权限检查结果
+ */
+export const checkAuth = async () => {
+  const session = await auth();
+  if (!session) {
+    return { authorized: false, error: "未授权访问" };
+  }
+  return { authorized: true, session };
+}
+

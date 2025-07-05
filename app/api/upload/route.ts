@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 import { writeFile } from 'fs/promises';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth/next';
+import { checkAuth } from '@/lib/auth';
 import path from 'path';
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const authResult = await checkAuth();
+    if (!authResult.authorized) {
+      return NextResponse.json({ error: authResult.error }, { status: 401 });
     }
 
     const formData = await request.formData();

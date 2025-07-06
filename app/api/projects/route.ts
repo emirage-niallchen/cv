@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import type { Project, Tag, ProjectImage, ProjectLink} from "@prisma/client";
 
+// 强制动态渲染，避免静态生成
+export const dynamic = 'force-dynamic';
 
 export type ProjectVO = Project & {
   tags: { tag: Tag }[];

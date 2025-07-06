@@ -1,8 +1,9 @@
-
-
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { checkAuth } from "@/lib/auth"
+
+// 强制动态渲染，避免静态生成
+export const dynamic = 'force-dynamic';
 
 export async function DELETE() {
     try {

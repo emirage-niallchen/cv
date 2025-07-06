@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { Tech } from '@prisma/client';
 import { Tag } from '@prisma/client';
 
+// 强制动态渲染，避免静态生成
+export const dynamic = 'force-dynamic';
+
 export type TechVO = Tech & {
   tags: Tag[]
 }

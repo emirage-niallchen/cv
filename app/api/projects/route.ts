@@ -1,6 +1,4 @@
-
-
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import type { Project, Tag, ProjectImage, ProjectLink} from "@prisma/client";
 
@@ -14,9 +12,9 @@ export type ProjectVO = Project & {
 /**
  * 获取所有项目
  */
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
 
     const tags = searchParams.getAll('tags'); // 获取所有tags参数
     

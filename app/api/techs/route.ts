@@ -1,6 +1,4 @@
-
-
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Tech } from '@prisma/client';
 import { Tag } from '@prisma/client';
@@ -9,9 +7,9 @@ export type TechVO = Tech & {
   tags: Tag[]
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const tags = searchParams.getAll('tags');
     
     const techs = await prisma.tech.findMany({
